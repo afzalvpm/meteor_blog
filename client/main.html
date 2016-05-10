@@ -1,0 +1,72 @@
+
+<body>
+  <style type="text/css">
+  .new-align-text{
+    width: 400px;
+  }
+  .conn-align{
+    width: 740px;
+    margin: 0px 50px;
+  }
+
+  </style>
+  <div class="container conn-align">
+    <header>
+
+      <h1>My Blog</h1>
+      <input type="checkbox" class="hideAll"/>Hide All
+      {{>loginButtons}}
+    </header>
+
+    <div>
+      {{> blogForm}}
+      {{> posts}}</div>
+
+    </div>
+
+
+  </body>
+
+  <template name="blogForm">
+    {{#if currentUser}}
+    <form class="addNew">
+      <div class="form-group">
+        <!-- <label for="exampleInputEmail1">Name</label> -->
+        <textarea class="form-control new-align-text" name="postTitle" placeholder="Title!!" value="" rows=""></textarea><br/>
+
+        <textarea class="form-control new-align-text" name="contentValue" placeholder="Post Content!!!" rows="5"></textarea>
+      </div>
+      <button type="submit" class="btn btn-lg btn-danger">Add New Post!</button>
+
+    </form>
+    {{/if}}
+  </template>
+  <template name="posts">
+    <h1>Posts</h1>
+    {{#each posts}}
+    <div data-id={{_id}}>
+      <h3><span class="index">{{@index}}</span>.<span class="postHead">{{title}}</span></h3>
+      <p class="postContent">{{content}}</p>
+      <span class="hide savePost glyphicon glyphicon-floppy-disk"></span>
+      <span class="editPost glyphicon glyphicon-pencil text-success"></span>
+      <span class="deletePost glyphicon glyphicon-trash text-danger"></span>
+
+      <ul class="commentList" data-id={{_id}}>
+        {{#each comments}}
+        <li data-value={{ this }}><span class="commentText">{{ this }}</span>
+        <span class="deleteComment glyphicon glyphicon-trash" data-value={{ this }} data-index={{@index}}></span></li>
+        {{/each}}
+      </ul>
+
+      {{#if currentUser}}
+      <form class="commentForm">
+        <div class="form-group">
+        <textarea class="form-control new-align-text" name="comment" placeholder="Comment!!" value=""></textarea>
+        </div>
+        <button type="submit" class="btn btn-sm btn-info">Add Comment</button>
+      </form>
+      {{/if}}
+    </div>
+    {{/each}}
+
+  </template>

@@ -1,0 +1,84 @@
+import { Mongo } from 'meteor/mongo';
+document.title = "Meteor Demo";
+MyCollection = new Mongo.Collection('tasks');
+
+if (Meteor.isClient) {
+         console.log(MyCollection.find().count());
+   Template.posts.helpers({
+      posts: function() {
+      return MyCollection.find();
+    }
+  })
+
+
+}
+
+if(Meteor.isServer){
+
+}
+
+Template.body.events({
+    // events go here
+    
+    'submit .addNew': function(event){
+      event.preventDefault();
+      var title = event.target.postTitle.value;
+      var content = event.target.contentValue.value;
+      var myData = {
+         title:title ,
+         content:content,
+         comments:[,]
+
+      }
+      if (title.length){
+      MyCollection.insert(myData);
+      console.log(MyCollection.find().count());
+       event.target.contentValue.value ="";
+       event.target.postTitle.value ="";
+      }
+     
+    },
+
+});
+Template.posts.events({
+  'click .deletePost': function(event){
+    event.preventDefault();
+    var id = $(event.target).parent().data('id')
+    var r = confirm("Are u Sure to remove?");
+    if (r == true) {
+      MyCollection.remove({'_id':id});
+    }
+    
+  },
+  'click .editPost': function(event){
+    event.preventDefault();
+    $(event.target).addClass('hide');
+    $(event.target).parent().find('.savePost').removeClass('hide');
+    $(event.target).parent().find('.postHead').attr('contenteditable',true);
+    $(event.target).parent().find('.postContent').attr('contenteditable',true);
+    
+  },
+  'submit .commentForm': function(event1){
+    event.preventDefault();
+    console.log(event.target.comment.value);
+    var id = $(event.target).parent().data('id');
+    var comment = event.target.comment.value;
+    event.target.comment.value =""
+        $('.commentList').html('')
+    MyCollection.update({_id:id},{$push:{'comments':comment}})
+    
+  },
+  'click .savePost': function(event){
+    event.preventDefault();
+    $(event.target).addClass('hide');;
+    var id = $(event.target).parent().data('id');
+    var title = $(event.target).parent().find('.postHead').text();
+    var content = $(event.target).parent().find('.postContent').text();
+    $(event.target).parent().find('.editPost').removeClass('hide');
+    $(event.target).parent().find('.postHead').text('');
+    $(event.target).parent().find('.postContent').text('');
+    MyCollection.update({_id:id},{$set:{'title':title,'content':content}})
+    
+  },
+
+});
